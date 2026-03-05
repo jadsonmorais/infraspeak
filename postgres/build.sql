@@ -28,6 +28,27 @@ CREATE TABLE carmel.infraspeak_raw_failure_details (
 	CONSTRAINT infraspeak_raw_failure_details_pkey PRIMARY KEY (failure_id)
 );
 
+-- Tabela para os dados de listagem das ocorrências
+CREATE TABLE IF NOT EXISTS carmel.infraspeak_raw_scheduled_works (
+    scheduled_work_id VARCHAR(255) PRIMARY KEY,
+    data JSONB NOT NULL,
+    extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela para os dados detalhados (com eventos de auditoria) das ocorrências
+CREATE TABLE IF NOT EXISTS carmel.infraspeak_raw_scheduled_work_details (
+    scheduled_work_id VARCHAR(255) PRIMARY KEY,
+    data JSONB NOT NULL,
+    extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices opcionais (mas recomendados) para otimizar a extração do work_id de dentro do JSON no futuro
+CREATE INDEX idx_raw_sched_works_work_id 
+ON carmel.infraspeak_raw_scheduled_works ((data->>'work_id'));
+
+CREATE INDEX idx_raw_sched_work_details_work_id 
+ON carmel.infraspeak_raw_scheduled_work_details ((data->>'work_id'));
+
 -- Views
 
 -- carmel.v_trabalho_analitico_operador_chamados fonte
